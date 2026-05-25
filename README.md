@@ -1,6 +1,6 @@
 # <p align="center">MediatorX</p>
 <p align="center">
-  <img src="./assets/logo.svg" width="160" alt="MediatorX Logo">
+  <img src="https://raw.githubusercontent.com/PianoNic/MediatorX/main/assets/logo.svg" width="160" alt="MediatorX Logo">
 </p>
 <p align="center">
   <strong>CQRS-style mediator and pipeline for Python - designed for clean / onion architecture.</strong><br>
@@ -17,7 +17,7 @@
 > [!NOTE]
 > Early-stage release. The public interface mirrors `Mediator.Abstractions` and is stable; the concrete `Mediator` implementation and DI helpers will still evolve. Pin a minor version.
 
-## ⚙️ About The Project
+## About The Project
 
 `mediatorx` brings the `IRequest` / `ICommand` / `IQuery` / `INotification` mediator pattern from .NET to Python - without runtime reflection magic, code generation, or scary metaclasses. Just protocols, async, and an explicit composition root.
 
@@ -25,7 +25,7 @@ The Python ecosystem is thin here: most existing packages (`mediatr`, `diator`, 
 
 If you've used MediatR or martinothamar's Mediator in C# and want the same shape in your FastAPI / clean architecture Python project, this is for you.
 
-## ✨ Features
+## Features
 
 - **CQRS separation** - `IRequest<T>`, `ICommand<T>`, `IQuery<T>` with marker-interface constraints (`where TMessage : ICommand` equivalent)
 - **Streaming** - `IStreamRequest`, `IStreamCommand`, `IStreamQuery` via `AsyncIterator`
@@ -35,7 +35,7 @@ If you've used MediatR or martinothamar's Mediator in C# and want the same shape
 - **Typed** - ships with `py.typed`, mypy-strict friendly
 - **Zero runtime deps** - no broker integration, no reflection, no source generation; in-process only
 
-## 📦 Installation
+## Installation
 
 ```bash
 pip install mediatorx
@@ -45,7 +45,7 @@ uv add mediatorx
 
 Requires Python 3.11+.
 
-## 🚀 Quickstart
+## Quickstart
 
 ```python
 import asyncio
@@ -70,7 +70,7 @@ async def main():
 asyncio.run(main())
 ```
 
-## 🧠 Core Concepts
+## Core Concepts
 
 ### Messages - Request, Command, Query
 
@@ -205,7 +205,7 @@ async for line in mediator.create_stream(TailLogs("api")):
     print(line)
 ```
 
-## 🏗️ Clean Architecture with FastAPI
+## Clean Architecture with FastAPI
 
 `mediatorx` is designed to live in your application layer. Endpoints become two-liners that hand a DTO to the mediator and return the response:
 
@@ -250,7 +250,7 @@ def build_mediator(container: Container) -> Mediator:
     return m
 ```
 
-## 📊 Comparison
+## Comparison
 
 | Feature                              | MediatR | Mediator (martinothamar) | **mediatorx** |
 |--------------------------------------|:-------:|:------------------------:|:-------------:|
@@ -264,11 +264,11 @@ def build_mediator(container: Container) -> Mediator:
 | Native AOT / no reflection           |   ❌    |            ✅            |   N/A (Python) |
 | Async-only                           |   ❌    |            ❌            |      ✅       |
 
-## 📜 License
+## License
 
 This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
-## 🙏 Acknowledgements
+## Acknowledgements
 
 - [Jimmy Bogard](https://github.com/jbogard) for [MediatR](https://github.com/LuckyPennySoftware/MediatR), which started all of this.
 - [Martin Othamar](https://github.com/martinothamar) for [Mediator](https://github.com/martinothamar/Mediator), whose interface taxonomy this library mirrors.
