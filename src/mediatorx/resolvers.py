@@ -43,6 +43,6 @@ class DictResolver:
             return t()
         except TypeError as e:
             raise KeyError(
-                f"no registration for {t.__name__} — register it via "
+                f"no registration for {t.__name__} - register it via "
                 f"add_instance/add_factory, or use a real DI container"
             ) from e

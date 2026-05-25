@@ -5,7 +5,7 @@ build-backend = "uv_build"
 [project]
 name = "mediatorx"
 version = "0.0.1"
-description = "CQRS-style mediator and pipeline for Python — interface-compatible with martinothamar/Mediator."
+description = "CQRS-style mediator and pipeline for Python - interface-compatible with martinothamar/Mediator."
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [

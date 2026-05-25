@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" role="img" aria-label="MediatorX maskable">
+  <!-- Full-bleed indigo background; logo sits well within the 80% safe zone (radius 204 from center) -->
+  <rect width="512" height="512" fill="#4338ca"/>
+  <!-- X spans from (176,176) to (336,336) -- 31% of canvas from each edge, deep inside the safe zone -->
+  <path d="M176 176 L336 336" stroke="#ffffff" stroke-width="40" stroke-linecap="round"/>
+  <path d="M336 176 L176 336" stroke="#ffffff" stroke-width="40" stroke-linecap="round"/>
+  <circle cx="256" cy="256" r="56" fill="#4338ca"/>
+  <circle cx="256" cy="256" r="28" fill="#ffffff"/>
+</svg>

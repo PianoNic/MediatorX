@@ -12,11 +12,16 @@ jobs:
       name: pypi
       url: https://pypi.org/p/mediatorx
     permissions:
-      id-token: write  # required for PyPI trusted publishing (OIDC)
-      contents: read
+      id-token: write   # PyPI trusted publishing (OIDC)
+      contents: write   # push version-bump commit back to main
 
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout main
+        uses: actions/checkout@v6
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -26,17 +31,29 @@ jobs:
       - name: Set up Python
         run: uv python install 3.11
 
-      - name: Verify tag matches pyproject.toml version
+      - name: Determine release version
+        id: version
         run: |
           TAG="${{ github.event.release.tag_name }}"
-          TAG_VERSION="${TAG#v}"
-          PROJECT_VERSION=$(uv run python -c "import tomllib,pathlib; print(tomllib.loads(pathlib.Path('pyproject.toml').read_text())['project']['version'])")
-          echo "Release tag: $TAG_VERSION"
-          echo "pyproject.toml version: $PROJECT_VERSION"
-          if [ "$TAG_VERSION" != "$PROJECT_VERSION" ]; then
-            echo "::error::Release tag ($TAG_VERSION) does not match pyproject.toml version ($PROJECT_VERSION)"
-            exit 1
+          VERSION="${TAG#v}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Release version: $VERSION"
+
+      - name: Sync pyproject.toml version to release tag
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          CURRENT=$(grep -E '^version = ' pyproject.toml | head -1 | cut -d'"' -f2)
+          if [ "$CURRENT" = "$VERSION" ]; then
+            echo "pyproject.toml version is already $VERSION - no bump needed"
+            exit 0
           fi
+          echo "Bumping pyproject.toml from $CURRENT to $VERSION"
+          sed -i "s/^version = \".*\"/version = \"$VERSION\"/" pyproject.toml
+          git config user.email "79938743+Pianonic@users.noreply.github.com"
+          git config user.name "PianoNic"
+          git add pyproject.toml
+          git commit -m "Bump version to $VERSION [skip ci]"
+          git push origin main
 
       - name: Build distributions
         run: uv build

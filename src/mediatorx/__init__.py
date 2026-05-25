@@ -1,4 +1,4 @@
-"""mediatorx — CQRS-style mediator and pipeline for Python."""
+"""mediatorx - CQRS-style mediator and pipeline for Python."""
 
 from __future__ import annotations
 

@@ -1,4 +1,4 @@
-# MediatorX — Workflow Rules (enforced)
+# MediatorX - Workflow Rules (enforced)
 
 ## Workflow rules (enforced)
 

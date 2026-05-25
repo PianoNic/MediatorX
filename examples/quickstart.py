@@ -1,4 +1,4 @@
-"""Quickstart demo — equivalent to the original mediatorx.py __main__ block."""
+"""Quickstart demo - equivalent to the original mediatorx.py __main__ block."""
 
 from __future__ import annotations
 

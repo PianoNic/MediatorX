@@ -1,35 +1,41 @@
-# mediatorx
+# <p align="center">MediatorX</p>
+<p align="center">
+  <img src="./assets/logo.svg" width="160" alt="MediatorX Logo">
+</p>
+<p align="center">
+  <strong>CQRS-style mediator and pipeline for Python - designed for clean / onion architecture.</strong><br>
+  Inspired by <a href="https://github.com/LuckyPennySoftware/MediatR">MediatR</a> and interface-compatible with <a href="https://github.com/martinothamar/Mediator">martinothamar/Mediator</a> for .NET.
+</p>
+<p align="center">
+  <a href="https://github.com/PianoNic/MediatorX"><img src="https://badgetrack.pianonic.ch/badge?tag=mediatorx&label=visits&color=4338ca&style=flat" alt="visits"/></a>
+  <a href="https://pypi.org/project/mediatorx/"><img src="https://img.shields.io/pypi/v/mediatorx?color=4338ca&label=PyPI" alt="PyPI version"/></a>
+  <a href="https://pypi.org/project/mediatorx/"><img src="https://img.shields.io/pypi/pyversions/mediatorx?color=4338ca" alt="Python versions"/></a>
+  <a href="https://github.com/PianoNic/MediatorX/blob/main/LICENSE"><img src="https://img.shields.io/github/license/PianoNic/MediatorX?color=4338ca" alt="license"/></a>
+  <a href="https://github.com/PianoNic/MediatorX/releases"><img src="https://img.shields.io/github/v/release/PianoNic/MediatorX?include_prereleases&color=4338ca&label=Latest%20Release" alt="latest release"/></a>
+</p>
 
-> CQRS-style mediator and pipeline for Python — designed for clean / onion architecture. Inspired by [MediatR](https://github.com/LuckyPennySoftware/MediatR) and interface-compatible with [martinothamar/Mediator](https://github.com/martinothamar/Mediator) for .NET.
+> [!NOTE]
+> Early-stage release. The public interface mirrors `Mediator.Abstractions` and is stable; the concrete `Mediator` implementation and DI helpers will still evolve. Pin a minor version.
 
-[![PyPI version](https://img.shields.io/pypi/v/mediatorx.svg)](https://pypi.org/project/mediatorx/)
-[![Python versions](https://img.shields.io/pypi/pyversions/mediatorx.svg)](https://pypi.org/project/mediatorx/)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+## ⚙️ About The Project
 
-`mediatorx` brings the `IRequest` / `ICommand` / `IQuery` / `INotification` mediator pattern from .NET to Python, without runtime reflection magic, code generation, or scary metaclasses. Just protocols, async, and an explicit composition root.
+`mediatorx` brings the `IRequest` / `ICommand` / `IQuery` / `INotification` mediator pattern from .NET to Python - without runtime reflection magic, code generation, or scary metaclasses. Just protocols, async, and an explicit composition root.
+
+The Python ecosystem is thin here: most existing packages (`mediatr`, `diator`, `mediatpy`, `python-mediator`) are abandoned, and the maintained ones either ship too much (Kafka, outbox, brokers) or too little (no streaming, no command/query separation, no pipeline pre/post split). `mediatorx` aims for one thing: **mirror the MediatR interface contracts in idiomatic async Python**, following the cleaner taxonomy from [martinothamar/Mediator](https://github.com/martinothamar/Mediator) - `IRequest` / `ICommand` / `IQuery` separation, stream variants, pre/post/exception processors. No more, no less.
 
 If you've used MediatR or martinothamar's Mediator in C# and want the same shape in your FastAPI / clean architecture Python project, this is for you.
 
----
+## ✨ Features
 
-## Why another mediator library?
+- **CQRS separation** - `IRequest<T>`, `ICommand<T>`, `IQuery<T>` with marker-interface constraints (`where TMessage : ICommand` equivalent)
+- **Streaming** - `IStreamRequest`, `IStreamCommand`, `IStreamQuery` via `AsyncIterator`
+- **Notifications (pub/sub)** - pluggable publishers (`ForeachAwait`, `TaskWhenAll`)
+- **Pipeline behaviors** - `IPipelineBehavior` plus split `PreProcessor` / `PostProcessor` / `ExceptionHandler` base classes
+- **Async-first** - no sync/async dual path, no `asyncio.run` hacks
+- **Typed** - ships with `py.typed`, mypy-strict friendly
+- **Zero runtime deps** - no broker integration, no reflection, no source generation; in-process only
 
-If you're coming from .NET, you've almost certainly used [MediatR](https://github.com/LuckyPennySoftware/MediatR) — the de facto mediator pattern library for ASP.NET Core / clean architecture projects. `mediatorx` exists because the equivalent Python ecosystem is thin: most packages (`mediatr`, `diator`, `mediatpy`, `python-mediator`) are abandoned, and the handful that are maintained either ship too much (Kafka, outbox, brokers) or too little (no streaming, no command/query separation, no pipeline pre/post split).
-
-`mediatorx` aims for one thing: **mirror the MediatR interface contracts in idiomatic async Python** — specifically following the cleaner taxonomy from [martinothamar/Mediator](https://github.com/martinothamar/Mediator) (`IRequest` / `ICommand` / `IQuery` separation, stream variants, pre/post/exception processors). No more, no less.
-
-- ✅ `IRequest<T>`, `ICommand<T>`, `IQuery<T>` — semantic CQRS separation
-- ✅ Streaming variants (`IStreamRequest`, `IStreamCommand`, `IStreamQuery`) via `AsyncIterator`
-- ✅ Notifications (pub/sub) with pluggable publishers (`ForeachAwait`, `TaskWhenAll`)
-- ✅ Pipeline behaviors with `IPipelineBehavior`, plus split `PreProcessor` / `PostProcessor` / `ExceptionHandler` base classes
-- ✅ Marker-interface constraints (`where TMessage : ICommand` equivalent)
-- ✅ Async-first — no sync/async dual path, no `asyncio.run` hacks
-- ❌ No runtime reflection, no source generation, no assembly scanning
-- ❌ No broker integration — bring your own; this is in-process
-
----
-
-## Installation
+## 📦 Installation
 
 ```bash
 pip install mediatorx
@@ -39,9 +45,7 @@ uv add mediatorx
 
 Requires Python 3.11+.
 
----
-
-## Quickstart
+## 🚀 Quickstart
 
 ```python
 import asyncio
@@ -58,7 +62,7 @@ class PingHandler(IRequestHandler[Ping, str]):
 
 async def main():
     mediator = Mediator()
-    mediator.register(Ping, PingHandler())
+    mediator.register(Ping, PingHandler)
 
     response = await mediator.send(Ping("hello"))
     print(response)  # "pong: hello"
@@ -66,11 +70,9 @@ async def main():
 asyncio.run(main())
 ```
 
----
+## 🧠 Core Concepts
 
-## Core concepts
-
-### Messages — Request, Command, Query
+### Messages - Request, Command, Query
 
 Three semantically distinct message kinds with identical mechanics. Pick the one that matches your CQRS intent; pipeline behaviors can be constrained by marker:
 
@@ -78,22 +80,22 @@ Three semantically distinct message kinds with identical mechanics. Pick the one
 from mediatorx import IRequest, ICommand, IQuery
 
 @dataclass
-class GetUserById(IQuery[User]):       # read — must return data
+class GetUserById(IQuery[User]):       # read - must return data
     user_id: int
 
 @dataclass
-class CreateBooking(ICommand[int]):    # write — returns booking id
+class CreateBooking(ICommand[int]):    # write - returns booking id
     user_id: int
     room_id: int
 
 @dataclass
-class SendWelcomeEmail(ICommand[None]):  # write — no meaningful return
+class SendWelcomeEmail(ICommand[None]):  # write - no meaningful return
     user_id: int
 ```
 
 ### Handlers
 
-One handler per message type. Constructor-injected dependencies — works with any DI container:
+One handler per message type. Constructor-injected dependencies - works with any DI container:
 
 ```python
 from mediatorx import IQueryHandler
@@ -106,7 +108,7 @@ class GetUserByIdHandler(IQueryHandler[GetUserById, User]):
         return await self._repo.get(query.user_id)
 ```
 
-### Pipeline behaviors
+### Pipeline Behaviors
 
 Wrap every handler in cross-cutting concerns (logging, validation, transactions) without touching the handler itself:
 
@@ -132,7 +134,7 @@ class LoggingBehavior(IPipelineBehavior[IMessage, TResponse]):
             raise
 ```
 
-For simple cases, use split pre/post/exception processors instead of the omnibus middleware shape:
+For simpler cases, use split pre/post/exception processors instead of the omnibus middleware shape:
 
 ```python
 from mediatorx import MessagePreProcessor, MessageExceptionHandler
@@ -146,14 +148,13 @@ class RetryableErrorHandler(MessageExceptionHandler[IMessage, TResponse, Transie
         return self.NotHandled  # let it bubble; record metric elsewhere
 ```
 
-### Constraining behaviors to a subset of messages
+### Constraining Behaviors
 
-Use the marker hierarchy (`IMessage`, `IBaseCommand`, `IBaseQuery`) to scope behaviors. A behavior bound to `ICommand` only fires for commands, not queries — exactly like the C# `where TMessage : ICommand` constraint:
+Use the marker hierarchy (`IMessage`, `IBaseCommand`, `IBaseQuery`) to scope behaviors. A behavior bound to `IBaseCommand` only fires for commands, not queries - exactly like the C# `where TMessage : ICommand` constraint:
 
 ```python
-class TransactionBehavior(IPipelineBehavior[IBaseCommand, TResponse]):
-    """Wraps commands in a DB transaction. Queries skip this entirely."""
-    ...
+mediator.add_behavior(TransactionBehavior, constraint=IBaseCommand)
+# Wraps commands in a DB transaction. Queries skip this entirely.
 ```
 
 ### Notifications (pub/sub)
@@ -180,7 +181,7 @@ Pick a publisher strategy at construction:
 ```python
 from mediatorx import Mediator, ForeachAwaitPublisher, TaskWhenAllPublisher
 
-mediator = Mediator(publisher=TaskWhenAllPublisher())  # parallel
+mediator = Mediator(publisher=TaskWhenAllPublisher())   # parallel
 # or
 mediator = Mediator(publisher=ForeachAwaitPublisher())  # sequential, default
 ```
@@ -204,9 +205,7 @@ async for line in mediator.create_stream(TailLogs("api")):
     print(line)
 ```
 
----
-
-## Clean architecture with FastAPI
+## 🏗️ Clean Architecture with FastAPI
 
 `mediatorx` is designed to live in your application layer. Endpoints become two-liners that hand a DTO to the mediator and return the response:
 
@@ -237,51 +236,39 @@ Wire handlers and behaviors in your composition root (typically `main.py` or a `
 
 ```python
 def build_mediator(container: Container) -> Mediator:
-    m = Mediator()
+    m = Mediator(resolver=container.resolver())
 
     # Behaviors run outermost-first
-    m.add_behavior(LoggingBehavior(container.logger()))
-    m.add_behavior(TransactionBehavior(container.uow()))
-    m.add_behavior(ValidationProcessor())
+    m.add_behavior(LoggingBehavior)
+    m.add_behavior(TransactionBehavior, constraint=IBaseCommand)
+    m.add_behavior(ValidationBehavior)
 
     # Handlers
-    m.register(CreateBookingCommand, CreateBookingHandler(container.booking_repo()))
-    m.register(GetUserById, GetUserByIdHandler(container.user_repo()))
+    m.register(CreateBookingCommand, CreateBookingHandler)
+    m.register(GetUserById, GetUserByIdHandler)
 
     return m
 ```
 
----
+## 📊 Comparison
 
-## Comparison to .NET libraries
+| Feature                              | MediatR | Mediator (martinothamar) | **mediatorx** |
+|--------------------------------------|:-------:|:------------------------:|:-------------:|
+| `IRequest<T>` / `IRequestHandler<,>` |   ✅    |            ✅            |      ✅       |
+| Command / Query separation           |   ❌    |            ✅            |      ✅       |
+| Streaming                            |   ✅    |            ✅            |      ✅       |
+| Notifications                        |   ✅    |            ✅            |      ✅       |
+| Pipeline behaviors                   |   ✅    |            ✅            |      ✅       |
+| Pre/Post/Exception processors        |   ✅    |            ✅            |      ✅       |
+| Compile-time handler validation      |   ❌    |     ✅ (source gen)      |   ❌ (runtime) |
+| Native AOT / no reflection           |   ❌    |            ✅            |   N/A (Python) |
+| Async-only                           |   ❌    |            ❌            |      ✅       |
 
-| Feature | MediatR | Mediator (martinothamar) | **mediatorx** |
-|---|---|---|---|
-| `IRequest<T>` / `IRequestHandler<,>` | ✅ | ✅ | ✅ |
-| Command / Query separation | ❌ | ✅ | ✅ |
-| Streaming | ✅ | ✅ | ✅ |
-| Notifications | ✅ | ✅ | ✅ |
-| Pipeline behaviors | ✅ | ✅ | ✅ |
-| Pre/Post/Exception processors | ✅ | ✅ | ✅ |
-| Compile-time handler validation | ❌ | ✅ (source gen) | ❌ (runtime) |
-| Native AOT / no reflection | ❌ | ✅ | N/A (Python) |
-| Async-only | ❌ | ❌ | ✅ |
+## 📜 License
 
----
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
-## Status
-
-Early. The interface surface is stable and mirrors Mediator.Abstractions; expect the concrete `Mediator` implementation and DI integration helpers to evolve. Pinning a minor version is recommended.
-
----
-
-## License
-
-MIT. See [LICENSE](LICENSE).
-
----
-
-## Acknowledgements
+## 🙏 Acknowledgements
 
 - [Jimmy Bogard](https://github.com/jbogard) for [MediatR](https://github.com/LuckyPennySoftware/MediatR), which started all of this.
 - [Martin Othamar](https://github.com/martinothamar) for [Mediator](https://github.com/martinothamar/Mediator), whose interface taxonomy this library mirrors.
