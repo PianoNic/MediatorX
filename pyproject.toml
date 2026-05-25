@@ -1,0 +1,87 @@
+[build-system]
+requires = ["uv_build >= 0.11.7, <0.12.0"]
+build-backend = "uv_build"
+
+[project]
+name = "mediatorx"
+version = "0.0.1"
+description = "CQRS-style mediator and pipeline for Python — interface-compatible with martinothamar/Mediator."
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+  { name = "PianoNic", email = "contact@pianonic.ch" },
+]
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
+keywords = [
+    "mediator",
+    "mediator-pattern",
+    "mediatr",
+    "cqrs",
+    "cqs",
+    "pipeline",
+    "pipeline-behavior",
+    "messaging",
+    "dispatcher",
+    "pubsub",
+    "notification",
+    "request-handler",
+    "async",
+    "asyncio",
+    "clean-architecture",
+    "onion-architecture",
+    "hexagonal-architecture",
+    "ddd",
+    "domain-driven-design",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Framework :: AsyncIO",
+    "Typing :: Typed",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+    "Topic :: Software Development :: Object Brokering",
+]
+
+[project.urls]
+Homepage = "https://github.com/PianoNic/mediatorx"
+Issues = "https://github.com/PianoNic/mediatorx/issues"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "mypy>=1.10",
+    "ruff>=0.6",
+]
+
+[tool.uv.build-backend]
+module-name = "mediatorx"
+module-root = "src"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501", "B008"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["src/mediatorx"]
